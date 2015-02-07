@@ -9,7 +9,7 @@ public class MovementManager : MonoBehaviour {
     public float PlayerSpeed;
     private Vector3 DesiredVelocity;
     private float lastSqrMag;
-    private string PlayerMoveRotation;
+    public string PlayerMoveRotation;
 
     //WaypointVariables;
     public GameObject Waypoint;
@@ -18,11 +18,15 @@ public class MovementManager : MonoBehaviour {
     [SerializeField] bool WaypointPlaced;
     [SerializeField] GameObject CurrentWaypoint;
 
+    //Rotation
+    public PlatformRotationController PRC_Script;
+
 	// Use this for initialization
 	void Start () {
 
         PC = GameObject.FindGameObjectWithTag("Player");
         WaypointPlaced = false;
+        DetermineOrientation();
 	
 	}
 	
@@ -31,11 +35,64 @@ public class MovementManager : MonoBehaviour {
 
         if (Input.GetMouseButtonUp(0))
         {
-            DetermineWaypoint();	
+            DetermineWaypoint();
+            DetermineSwitch();	        
         }
 
-       
+        
+
 	}
+    //PlayerRotation-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    void DetermineSwitch()
+    {
+        Ray SwitchRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(SwitchRay, out hit, 100))
+        {
+            if (hit.collider.tag == "Switch")
+            {
+                PRC_Script = hit.collider.gameObject.GetComponent<SwitchManager>().PRC_Script;
+                PRC_Script.fl_RotationDegreesAmount += PRC_Script.fl_RotationAddedOn;
+                PRC_Script.bl_RotatePlatform = true;
+            }
+        }      
+    }
+
+    void DetermineOrientation()
+    {
+        int PlayerRotation = Mathf.RoundToInt(PC.transform.eulerAngles.z);        
+
+        if (PlayerRotation == 90)
+        {
+            PlayerMoveRotation = ("Left");
+        }
+        if (PlayerRotation == 180)
+        {
+            PlayerMoveRotation = ("Down");
+        }
+        if (PlayerRotation == 270)
+        {
+            PlayerMoveRotation = ("Right");
+        }
+        if (PlayerRotation == 0)
+        {
+            PlayerMoveRotation = ("Up");
+        }
+
+         PC.transform.eulerAngles = new Vector3(0, 0, PlayerRotation);
+
+        
+    }
+
+
+    public void DetermineRotatingPlatform()
+    {
+        //PRC_Script = PC.transform.parent.GetComponent<PlatformRotationController>();
+    }
+
+
+    //PlayerMovement-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     void FixedUpdate()
     {
@@ -46,16 +103,25 @@ public class MovementManager : MonoBehaviour {
 
             DeterminePlayerMovePosition();
         }
-    }
+    }    
 
     void DeterminePlayerMovePosition()
     {
-        if (PlayerMoveRotation == "Up")
+        if (PlayerMoveRotation == "Up" || PlayerMoveRotation == "Down")
         {            
             if (PC.transform.position.x <= CurrentWaypoint.transform.position.x + 0.2 && PC.transform.position.x >= CurrentWaypoint.transform.position.x - 0.2)
             {
                 PlayerMoving = false;
                 PC.rigidbody.velocity = Vector3.zero;               
+            }
+        }
+
+        if (PlayerMoveRotation == "Right" || PlayerMoveRotation == "Left")
+        {
+            if (PC.transform.position.y <= CurrentWaypoint.transform.position.y + 0.2 && PC.transform.position.y >= CurrentWaypoint.transform.position.y - 0.2)
+            {
+                PlayerMoving = false;
+                PC.rigidbody.velocity = Vector3.zero;
             }
         }
     }
@@ -71,9 +137,9 @@ public class MovementManager : MonoBehaviour {
         if (Physics.Raycast(WaypointRay, out hit, 100))
         {
             if (hit.collider.tag == "Platform")
-            {
-               
+            {               
                 ClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                DetermineOrientation();
                 CheckPlayerRotation();
             }
         }       
@@ -81,25 +147,26 @@ public class MovementManager : MonoBehaviour {
 
     void CheckPlayerRotation()
     {
-        string PlayerRotation = null;
-
-        if (PC.transform.eulerAngles.z == 0)
-        {
-            PlayerRotation = "Up";
-        }
-
-        PlayerMoveRotation = PlayerRotation;
-        CheckPlayerPosition(PlayerRotation);
+        
+        CheckPlayerPosition();
     }
 
-    void CheckPlayerPosition(string PlayerRot)
+    void CheckPlayerPosition()
     {
-        if (PlayerRot == "Up")
-        {
-            
+
+        if (PlayerMoveRotation == "Up" || PlayerMoveRotation == "Down")
+        {            
             if (PC.transform.position.y == ClickPosition.y || (PC.transform.position.y <= ClickPosition.y + 2 && PC.transform.position.y > ClickPosition.y - 2))
             {
                 WaypointPosition = new Vector3(ClickPosition.x, PC.transform.position.y, 20);
+                PlaceWaypoint();
+            }
+        }
+        if (PlayerMoveRotation == "Right" || PlayerMoveRotation == "Left")
+        {
+            if (PC.transform.position.x == ClickPosition.x || (PC.transform.position.x <= ClickPosition.x + 2 && PC.transform.position.x > ClickPosition.x - 2))
+            {
+                WaypointPosition = new Vector3(PC.transform.position.x, ClickPosition.y, 20);
                 PlaceWaypoint();
             }
         }
@@ -124,7 +191,6 @@ public class MovementManager : MonoBehaviour {
 
     void SetPlayerMovement()
     {
-
         PlayerMoving = true;
     }
 }
