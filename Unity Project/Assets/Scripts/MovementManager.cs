@@ -6,10 +6,7 @@ public class MovementManager : MonoBehaviour {
     //PlayerVariables
     [SerializeField] GameObject PC;
     [SerializeField] bool PlayerMoving;
-    [SerializeField] float PlayerSpeed;
-    public float PlayerRunningSpeed;
-    public float PlayerStealthSpeed;
-
+    public float PlayerSpeed;
     private Vector3 DesiredVelocity;
     private float lastSqrMag;
     public string PlayerMoveRotation;
@@ -23,12 +20,6 @@ public class MovementManager : MonoBehaviour {
 
     //Rotation
     public PlatformRotationController PRC_Script;
-
-    //DoubleClickVariables
-    private bool SingleClick = false;
-    private bool TimerRunning;
-    private float TimeForDoubleClick = 0;
-    public float Delay;
 
 	// Use this for initialization
 	void Start () {
@@ -44,17 +35,6 @@ public class MovementManager : MonoBehaviour {
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (Time.time - TimeForDoubleClick < Delay)
-            {
-                Debug.Log("DoubleClick");
-                PlayerSpeed = PlayerRunningSpeed;
-            }
-            else
-            {
-                PlayerSpeed = PlayerStealthSpeed;
-            }
-
-            TimeForDoubleClick = Time.time;
             DetermineWaypoint();
             DetermineSwitch();	        
         }
