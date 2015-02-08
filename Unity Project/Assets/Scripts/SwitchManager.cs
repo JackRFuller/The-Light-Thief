@@ -3,13 +3,13 @@ using System.Collections;
 
 public class SwitchManager : MonoBehaviour {
 
-    public GameObject Switch;
+    public GameObject Platform;
     public PlatformRotationController PRC_Script;
 
 	// Use this for initialization
 	void Start () {
 
-        PRC_Script = Switch.GetComponent<PlatformRotationController>();
+        PRC_Script = Platform.GetComponent<PlatformRotationController>();
 	
 	}
 	

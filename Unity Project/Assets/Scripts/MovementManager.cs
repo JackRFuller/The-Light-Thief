@@ -5,7 +5,7 @@ public class MovementManager : MonoBehaviour {
 
     //PlayerVariables
     [SerializeField] GameObject PC;
-    [SerializeField] bool PlayerMoving;
+    public bool PlayerMoving;
     [SerializeField] float PlayerSpeed;
     public float PlayerRunningSpeed;
     public float PlayerStealthSpeed;
@@ -46,7 +46,7 @@ public class MovementManager : MonoBehaviour {
         {
             if (Time.time - TimeForDoubleClick < Delay)
             {
-                Debug.Log("DoubleClick");
+                //Debug.Log("DoubleClick");
                 PlayerSpeed = PlayerRunningSpeed;
             }
             else
@@ -156,7 +156,7 @@ public class MovementManager : MonoBehaviour {
 
         if (Physics.Raycast(WaypointRay, out hit, 100))
         {
-            if (hit.collider.tag == "Platform")
+            if (hit.collider.tag == "Platform" || hit.collider.gameObject.name == "RotationZone")
             {               
                 ClickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 DetermineOrientation();
@@ -206,7 +206,41 @@ public class MovementManager : MonoBehaviour {
             WaypointPlaced = true;
         }
 
-        SetPlayerMovement();
+        //SetPlayerMovement();
+        DrawRaycast();
+    }
+
+    void DrawRaycast()
+    {
+        bool NoCollision = true;
+        Vector3 forward = WaypointPosition - PC.transform.position;
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(PC.transform.position, forward, 100F);
+        int i = 0;
+        while (i < hits.Length && NoCollision)
+        {
+            RaycastHit hit = hits[i];
+            //Debug.Log(hit.collider.gameObject.name + i.ToString());
+            if (hit.collider.gameObject.name == "RotatingPlatform" || hit.collider.gameObject.name == "Platform")
+            {
+                if (i == 0)
+                {
+                    //NoCollision = false;
+                }
+                
+            }
+
+            i++;
+        }
+
+        if (NoCollision)
+        {
+            SetPlayerMovement();
+        }
+        else
+        {
+            //Debug.Log("Collision");
+        }
     }
 
     void SetPlayerMovement()
