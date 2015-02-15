@@ -46,6 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Daemon_BloodyQueen\script\characterRotate.cs" />
      <Compile Include="Assets\Scripts\MovementManager.cs" />
      <Compile Include="Assets\Scripts\PlatformRotationController.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />

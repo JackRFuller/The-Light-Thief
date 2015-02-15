@@ -5,8 +5,11 @@ public class MovementManager : MonoBehaviour {
 
     //PlayerVariables
     [SerializeField] GameObject PC;
+    [SerializeField] GameObject PC_Mesh;
+    private PlayerManager PM_Script;
+    private Vector3 PCMesh_Position;
     public bool PlayerMoving;
-    [SerializeField] float PlayerSpeed;
+    public float PlayerSpeed;
     public float PlayerRunningSpeed;
     public float PlayerStealthSpeed;
 
@@ -25,7 +28,7 @@ public class MovementManager : MonoBehaviour {
     public PlatformRotationController PRC_Script;
 
     //DoubleClickVariables
-    private bool SingleClick = false;
+   
     private bool TimerRunning;
     private float TimeForDoubleClick = 0;
     public float Delay;
@@ -34,6 +37,9 @@ public class MovementManager : MonoBehaviour {
 	void Start () {
 
         PC = GameObject.FindGameObjectWithTag("Player");
+        PM_Script = PC.GetComponent<PlayerManager>();
+        PC_Mesh = GameObject.FindGameObjectWithTag("PC_Mesh");
+        PCMesh_Position = PC_Mesh.transform.localPosition;
         WaypointPlaced = false;
         DetermineOrientation();
 	
@@ -41,6 +47,11 @@ public class MovementManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (Input.GetKey("r"))
+        {
+            Application.LoadLevel(Application.loadedLevelName);
+        }
 
         if (Input.GetMouseButtonUp(0))
         {
@@ -116,11 +127,14 @@ public class MovementManager : MonoBehaviour {
 
     void FixedUpdate()
     {
+
+        PC_Mesh.transform.localPosition = PCMesh_Position;
         if (PlayerMoving)
         {
+            PM_Script.TurnOnAnimations();
             Vector3 PlayerDirection = (CurrentWaypoint.transform.position - PC.transform.position).normalized * PlayerSpeed;
             PC.rigidbody.velocity =  PlayerDirection * Time.deltaTime;
-
+            
             DeterminePlayerMovePosition();
         }
     }    
@@ -128,10 +142,12 @@ public class MovementManager : MonoBehaviour {
     void DeterminePlayerMovePosition()
     {
         if (PlayerMoveRotation == "Up" || PlayerMoveRotation == "Down")
-        {            
+        {
+           
             if (PC.transform.position.x <= CurrentWaypoint.transform.position.x + 0.2 && PC.transform.position.x >= CurrentWaypoint.transform.position.x - 0.2)
             {
                 PlayerMoving = false;
+                PM_Script.TurnOffAnimations();
                 PC.rigidbody.velocity = Vector3.zero;               
             }
         }
@@ -141,9 +157,12 @@ public class MovementManager : MonoBehaviour {
             if (PC.transform.position.y <= CurrentWaypoint.transform.position.y + 0.2 && PC.transform.position.y >= CurrentWaypoint.transform.position.y - 0.2)
             {
                 PlayerMoving = false;
+                PM_Script.TurnOffAnimations();
                 PC.rigidbody.velocity = Vector3.zero;
             }
         }
+
+       
     }
 
     
@@ -197,15 +216,20 @@ public class MovementManager : MonoBehaviour {
         if (WaypointPlaced)
         {
             CurrentWaypoint.transform.position = WaypointPosition;
+            CurrentWaypoint.audio.Play();
+            CurrentWaypoint.transform.FindChild("WaypointSymbol").gameObject.animation.Play("Stealth_Grow");
         }
 
         if (!WaypointPlaced)
         {
-            Instantiate(Waypoint, WaypointPosition, Waypoint.transform.rotation);
+            Instantiate(Waypoint, WaypointPosition, Waypoint.transform.rotation);           
             CurrentWaypoint = GameObject.Find("Waypoint(Clone)");
+            CurrentWaypoint.audio.Play();
+            CurrentWaypoint.transform.FindChild("WaypointSymbol").gameObject.animation.Play("Stealth_Grow");
             WaypointPlaced = true;
         }
 
+       
         //SetPlayerMovement();
         DrawRaycast();
     }
@@ -245,6 +269,55 @@ public class MovementManager : MonoBehaviour {
 
     void SetPlayerMovement()
     {
+        if (PlayerMoveRotation == "Up")
+        {
+            if (CurrentWaypoint.transform.position.x < PC.transform.position.x)
+            {
+                PC_Mesh.transform.localEulerAngles = new Vector3(0, 270, 0);
+            }
+            if (CurrentWaypoint.transform.position.x > PC.transform.position.x)
+            {
+                PC_Mesh.transform.localEulerAngles = new Vector3(0, 90, 0);
+            }
+        }
+
+        if (PlayerMoveRotation == "Down")
+        {
+            if (CurrentWaypoint.transform.position.x > PC.transform.position.x)
+            {
+                PC_Mesh.transform.localEulerAngles = new Vector3(0, 270, 0);
+            }
+            if (CurrentWaypoint.transform.position.x < PC.transform.position.x)
+            {
+                PC_Mesh.transform.localEulerAngles = new Vector3(0, 90, 0);
+            }
+        }
+        if (PlayerMoveRotation == "Left")
+        {
+
+            if (CurrentWaypoint.transform.position.y < PC.transform.position.y)
+            {
+                PC_Mesh.transform.localEulerAngles = new Vector3(0, 270, 0);
+            }
+            if (CurrentWaypoint.transform.position.y > PC.transform.position.y)
+            {
+                PC_Mesh.transform.localEulerAngles = new Vector3(0, 90, 0);
+            }
+        }
+
+        if (PlayerMoveRotation == "Right")
+        {
+
+            if (CurrentWaypoint.transform.position.y > PC.transform.position.y)
+            {
+                PC_Mesh.transform.localEulerAngles = new Vector3(0, 270, 0);
+            }
+            if (CurrentWaypoint.transform.position.y < PC.transform.position.y)
+            {
+                PC_Mesh.transform.localEulerAngles = new Vector3(0, 90, 0);
+            }
+        }
         PlayerMoving = true;
+       
     }
 }
