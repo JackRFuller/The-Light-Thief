@@ -69,7 +69,6 @@
     <Compile Include="Assets\Standard Assets\Image Effects (Pro Only)\VortexEffect.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Mobility_01_Free_v2\Mobility_Free_Unity_Info.txt" />
     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\DLAA.shader" />
     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA2.shader" />
     <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_Antialiasing\FXAA3Console.shader" />

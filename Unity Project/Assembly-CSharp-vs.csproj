@@ -48,7 +48,6 @@
   <ItemGroup>
      <Compile Include="Assets\Daemon_BloodyQueen\script\characterRotate.cs" />
      <Compile Include="Assets\Scripts\MovementManager.cs" />
-     <Compile Include="Assets\Scripts\NPC_Behaviour.cs" />
      <Compile Include="Assets\Scripts\PlatformRotationController.cs" />
      <Compile Include="Assets\Scripts\PlayerManager.cs" />
      <Compile Include="Assets\Scripts\SwitchManager.cs" />
@@ -76,7 +75,6 @@
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\FisheyeShader.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\Contrast Stretch\Apply.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\frag_ao.cginc" />
-     <None Include="Assets\Mobility_01_Free_v2\Mobility_Free_Unity_Info.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_DepthOfField\DepthOfField34.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\_BloomAndFlares\MobileBlur.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\_Sources\Shaders\SSAOShader.shader" />
